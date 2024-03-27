@@ -42,7 +42,64 @@ const getByIdFromDB = async (req: Request, res: Response) => {
   }
 };
 
+const updateIntoDB = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const result = await AdminService.updateIntoDB(id, req.body);
+    res.status(200).json({
+      success: true,
+      message: "Admin update successfully!",
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.name || "somthing went weong",
+      error,
+    });
+  }
+};
+
+const deletFromDB = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const result = await AdminService.deletFromDB(id);
+    res.status(200).json({
+      success: true,
+      message: "Admin deletes successfully!",
+      data: null,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.name || "somthing went weong",
+      error,
+    });
+  }
+};
+
+const softDeletFromDB = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const result = await AdminService.softDeletFromDB(id);
+    res.status(200).json({
+      success: true,
+      message: "Admin deletes successfully!",
+      data: null,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.name || "somthing went weong",
+      error,
+    });
+  }
+};
+
 export const AdminController = {
   getAllFromDB,
   getByIdFromDB,
+  updateIntoDB,
+  deletFromDB,
+  softDeletFromDB,
 };
