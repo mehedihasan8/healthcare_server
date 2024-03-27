@@ -64,6 +64,13 @@ const getAllAdminFromDB = async (params: any, options: any) => {
 };
 
 const getByIdFromDB = async (id: string): Promise<Admin | null> => {
+  await prisma.admin.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
+
   const result = await prisma.admin.findUnique({
     where: {
       id,
