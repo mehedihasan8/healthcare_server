@@ -11,6 +11,26 @@ const getAllFromDB = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "All Admin Fetch successfully!",
+      meta: result.meta,
+      data: result.data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.name || "somthing went weong",
+      error,
+    });
+  }
+};
+
+const getByIdFromDB = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const result = await AdminService.getByIdFromDB(id);
+    res.status(200).json({
+      success: true,
+      message: "Admin Fetch by id successfully!",
+
       data: result,
     });
   } catch (error) {
@@ -24,4 +44,5 @@ const getAllFromDB = async (req: Request, res: Response) => {
 
 export const AdminController = {
   getAllFromDB,
+  getByIdFromDB,
 };

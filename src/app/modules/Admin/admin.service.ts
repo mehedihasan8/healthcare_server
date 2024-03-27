@@ -4,7 +4,7 @@ import { paginationHelper } from "../../../helpers/paginationHelper";
 import { prisma } from "../../../shared/prisma";
 
 const getAllAdminFromDB = async (params: any, options: any) => {
-  const { limit, skip, sortBy, sortOrder } =
+  const { page, limit, skip, sortBy, sortOrder } =
     paginationHelper.calculatePagination(options);
   const andCondions: Prisma.AdminWhereInput[] = [];
   const { searchTerm, ...filterData } = params;
@@ -45,10 +45,30 @@ const getAllAdminFromDB = async (params: any, options: any) => {
             createdAt: "desc",
           },
   });
+  const total = await prisma.admin.count({
+    where: whereConditon,
+  });
 
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
+const getByIdFromDB = async (id: string) => {
+  const result = await prisma.admin.findUnique({
+    where: {
+      id,
+    },
+  });
   return result;
 };
 
 export const AdminService = {
   getAllAdminFromDB,
+  getByIdFromDB,
 };
