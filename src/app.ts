@@ -1,7 +1,7 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import router from "./app/routes";
-
+import cookiParser from "cookie-parser";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import httpStatus from "http-status";
 
@@ -12,6 +12,7 @@ app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookiParser());
 
 app.get("/", (req, res) => {
   res.send("Health care srver is running!!");
