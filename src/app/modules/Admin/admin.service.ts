@@ -106,6 +106,7 @@ const updateIntoDB = async (
 
   return result;
 };
+
 const deletFromDB = async (id: string): Promise<Admin | null> => {
   await prisma.admin.findUniqueOrThrow({
     where: {

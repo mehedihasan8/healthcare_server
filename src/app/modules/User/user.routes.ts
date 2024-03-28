@@ -1,8 +1,10 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { userController } from "./user.controller";
+
+import auth from "../../middlewares/auth";
 
 const route = express.Router();
 
-route.post("/create", userController.createAdmin);
+route.post("/", auth("ADMIN", "SUPPER_ADMIN"), userController.createAdmin);
 
 export const userRoute = route;
