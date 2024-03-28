@@ -15,6 +15,8 @@ export default {
     reset_pass_token_expires_in: process.env.RESET_PASS_TOKEN_EXPIRES_IN,
   },
   reset_pass_link: process.env.RESET_PASS_LINK,
+  cluad_secret: process.env.CLUAD_SECRET,
+  cluad_api: process.env.CLUAD_API,
 
   emailSender: {
     email: process.env.EMAIL,

@@ -185,6 +185,7 @@ const resetPassword = async (
     },
   });
 };
+
 export const AuthService = {
   loginUser,
   refreshToken,
