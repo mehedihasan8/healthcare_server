@@ -1,8 +1,9 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { Secret } from "jsonwebtoken";
 import { jwtHelpers } from "./../../../helpers/jwtHelpers";
 import { prisma } from "../../../shared/prisma";
 import bcrypt from "bcrypt";
 import { UserStatus } from "@prisma/client";
+import config from "../../../config";
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const user = await prisma.user.findUniqueOrThrow({
@@ -26,8 +27,8 @@ const loginUser = async (payload: { email: string; password: string }) => {
       email: user.email,
       role: user.role,
     },
-    "123456",
-    "15m"
+    config.jwt.jwt_secret as Secret,
+    config.jwt.expires_in as string
   );
 
   const refreshToken = jwtHelpers.generateToken(
@@ -35,8 +36,8 @@ const loginUser = async (payload: { email: string; password: string }) => {
       email: user.email,
       role: user.role,
     },
-    "123456789",
-    "30d"
+    config.jwt.refresh_token_secret as Secret,
+    config.jwt.refresh_token_expires_in as string
   );
 
   return {
@@ -49,7 +50,10 @@ const loginUser = async (payload: { email: string; password: string }) => {
 const refreshToken = async (token: string) => {
   let decodedData;
   try {
-    decodedData = jwtHelpers.verifyToken(token, "123456789");
+    decodedData = jwtHelpers.verifyToken(
+      token,
+      config.jwt.refresh_token_secret as Secret
+    );
   } catch (err) {
     throw new Error("You are not authrized!");
   }
@@ -66,8 +70,8 @@ const refreshToken = async (token: string) => {
       email: user.email,
       role: user.role,
     },
-    "123456",
-    "15m"
+    config.jwt.jwt_secret as Secret,
+    config.jwt.expires_in as string
   );
 
   return {
