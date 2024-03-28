@@ -43,6 +43,11 @@ route.post(
   }
 );
 
-route.patch("/:id/status", userController.changeProfileStatus);
+route.patch(
+  "/:id/status",
+  auth(UserRole.SUPPER_ADMIN, UserRole.ADMIN),
+
+  userController.changeProfileStatus
+);
 
 export const userRoute = route;
