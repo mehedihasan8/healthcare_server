@@ -8,6 +8,11 @@ import { fileUploader } from "../../../helpers/fileUploader";
 import { userValidation } from "./user.validation";
 
 const route = express.Router();
+route.get(
+  "/",
+  auth(UserRole.ADMIN, UserRole.SUPPER_ADMIN),
+  userController.getAllFromDB
+);
 
 route.post(
   "/create-admin",
@@ -37,5 +42,7 @@ route.post(
     return userController.createPatient(req, res, next);
   }
 );
+
+route.patch("/:id/status", userController.changeProfileStatus);
 
 export const userRoute = route;

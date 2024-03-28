@@ -1,7 +1,10 @@
-import { UserRole } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { prisma } from "../../../shared/prisma";
 import { fileUploader } from "../../../helpers/fileUploader";
+import { IPaginationOptions } from "../../interfaces/pagination";
+import { paginationHelper } from "../../../helpers/paginationHelper";
+import { userSearchAbleFields } from "./user.constant";
 
 const createAdmin = async (req: any) => {
   if (req.file) {
@@ -91,8 +94,79 @@ const createPatient = async (req: any) => {
   return result;
 };
 
+const getAllFromDB = async (params: any, options: IPaginationOptions) => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(options);
+  const andCondions: Prisma.UserWhereInput[] = [];
+  const { searchTerm, ...filterData } = params;
+
+  if (params.searchTerm) {
+    andCondions.push({
+      OR: userSearchAbleFields?.map((field) => ({
+        [field]: {
+          contains: params.searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andCondions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+
+  const whereConditon: Prisma.UserWhereInput = { AND: andCondions };
+
+  const result = await prisma.user.findMany({
+    where: whereConditon,
+    skip,
+    take: limit,
+    orderBy:
+      sortBy && sortOrder
+        ? {
+            [sortBy]: sortOrder,
+          }
+        : {
+            createdAt: "desc",
+          },
+
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      needPasswordChange: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+      admin: true,
+      patient: true,
+      doctor: true,
+    },
+  });
+
+  const total = await prisma.user.count({
+    where: whereConditon,
+  });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
 export const userService = {
   createAdmin,
   createDoctor,
   createPatient,
+  getAllFromDB,
 };
