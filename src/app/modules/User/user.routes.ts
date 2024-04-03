@@ -13,6 +13,16 @@ route.get(
   auth(UserRole.ADMIN, UserRole.SUPPER_ADMIN),
   userController.getAllFromDB
 );
+route.get(
+  "/me",
+  auth(
+    UserRole.ADMIN,
+    UserRole.SUPPER_ADMIN,
+    UserRole.DOCTOR,
+    UserRole.PATIENT
+  ),
+  userController.getMyProfile
+);
 
 route.post(
   "/create-admin",
@@ -48,6 +58,21 @@ route.patch(
   auth(UserRole.SUPPER_ADMIN, UserRole.ADMIN),
 
   userController.changeProfileStatus
+);
+
+route.patch(
+  "/update-my/profile",
+  auth(
+    UserRole.ADMIN,
+    UserRole.SUPPER_ADMIN,
+    UserRole.DOCTOR,
+    UserRole.PATIENT
+  ),
+  fileUploader.upload.single("file"),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    return userController.updateMyProfile(req, res, next);
+  }
 );
 
 export const userRoute = route;
