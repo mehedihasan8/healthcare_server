@@ -23,6 +23,10 @@ const insetIntoDB = async (req: Request) => {
 };
 
 const deletFormDB = async (id: string) => {
+  await prisma.specialties.findUniqueOrThrow({
+    where: { id },
+  });
+
   const result = await prisma.specialties.delete({
     where: { id },
   });

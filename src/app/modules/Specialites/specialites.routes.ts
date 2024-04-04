@@ -2,12 +2,18 @@ import express, { NextFunction, Request, Response } from "express";
 import { specialitesController } from "./specialites.controller";
 import { fileUploader } from "../../../helpers/fileUploader";
 import { SpecialtiesValidtaion } from "./specialites.validation";
+import auth from "../../middlewares/auth";
+import { UserRole } from "@prisma/client";
 
 const route = express.Router();
 
 route.get("/", specialitesController.getAllSpecialitesFormDB);
 
-route.delete("/:id", specialitesController.deletSingleSpecialitesFormDB);
+route.delete(
+  "/:id",
+  auth(UserRole.ADMIN, UserRole.SUPPER_ADMIN),
+  specialitesController.deletSingleSpecialitesFormDB
+);
 
 route.post(
   "/",
