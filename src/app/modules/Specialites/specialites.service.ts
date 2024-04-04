@@ -22,7 +22,15 @@ const insetIntoDB = async (req: Request) => {
   return result;
 };
 
+const deletFormDB = async (id: string) => {
+  const result = await prisma.specialties.delete({
+    where: { id },
+  });
+  return result;
+};
+
 export const specialitesService = {
   insetIntoDB,
   getAllSpecialitesFormDB,
+  deletFormDB,
 };

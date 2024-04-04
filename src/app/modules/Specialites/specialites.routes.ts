@@ -5,11 +5,9 @@ import { SpecialtiesValidtaion } from "./specialites.validation";
 
 const route = express.Router();
 
-route.get(
-  "/",
+route.get("/", specialitesController.getAllSpecialitesFormDB);
 
-  specialitesController.getAllSpecialitesFormDB
-);
+route.delete("/:id", specialitesController.deletSingleSpecialitesFormDB);
 
 route.post(
   "/",
