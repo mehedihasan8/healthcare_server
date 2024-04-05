@@ -5,4 +5,6 @@ const route = express.Router();
 
 route.get("/", doctorController.getAllFromDB);
 
+route.get("/:id", doctorController.getByIdFromDB);
+
 export const doctorRoute = route;
