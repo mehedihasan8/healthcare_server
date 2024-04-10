@@ -15,6 +15,8 @@ route.delete(
   doctorController.deleteFromDB
 );
 
+route.patch("/:id", doctorController.updateIntoDB);
+
 route.delete(
   "/soft/:id",
   auth(UserRole.SUPPER_ADMIN, UserRole.ADMIN),
