@@ -77,6 +77,13 @@ const getAllFromDB = async (
         : {
             createdAt: "desc",
           },
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialties: true,
+        },
+      },
+    },
   });
 
   const total = await prisma.doctor.count({
@@ -125,15 +132,12 @@ const updateIntoDB = async (
         id,
       },
       data: doctorData,
-      include: {
-        doctorSpecialties: true,
-      },
     });
 
     if (specialties && specialties.length > 0) {
       // delete specialties
       const deletedSpecialtesIds = specialties.filter(
-        (specialty) => specialty.isDeleted
+        (specialty: any) => specialty.isDeleted
       );
       console.log(deletedSpecialtesIds);
       for (const specialty of deletedSpecialtesIds) {
@@ -147,7 +151,7 @@ const updateIntoDB = async (
 
       // create specialties
       const createSpecialtiesIds = specialties.filter(
-        (specialty) => !specialty.isDeleted
+        (specialty: any) => !specialty.isDeleted
       );
 
       for (const specialty of createSpecialtiesIds) {
@@ -166,7 +170,11 @@ const updateIntoDB = async (
       id: doctorInfo.id,
     },
     include: {
-      doctorSpecialties: true,
+      doctorSpecialties: {
+        include: {
+          specialties: true,
+        },
+      },
     },
   });
 
