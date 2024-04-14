@@ -8,6 +8,7 @@ import { PatientService } from "./patient.service";
 
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, patientFilterableFields);
+
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
   const result = await PatientService.getAllFromDB(filters, options);
