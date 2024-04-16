@@ -99,23 +99,15 @@ const updateIntoDB = async (
       isDeleted: false,
     },
   });
-
-  await prisma.$transaction(async (transactionClient) => {
-    //update patient data
-    await transactionClient.patient.update({
+  const result = await prisma.$transaction(async (transactionClient) => {
+    const updatePatient = await transactionClient.patient.update({
       where: {
         id,
       },
       data: patientData,
-      include: {
-        patientHealthData: true,
-        medicalReport: true,
-      },
     });
-
-    // create or update patient health data
     if (patientHealthData) {
-      await transactionClient.patientHealthData.upsert({
+      const healthData = await transactionClient.patientHealthData.upsert({
         where: {
           patientId: patientInfo.id,
         },
@@ -125,7 +117,7 @@ const updateIntoDB = async (
     }
 
     if (medicalReport) {
-      await transactionClient.medicalReport.create({
+      const report = await transactionClient.medicalReport.create({
         data: { ...medicalReport, patientId: patientInfo.id },
       });
     }
@@ -136,10 +128,11 @@ const updateIntoDB = async (
       id: patientInfo.id,
     },
     include: {
-      patientHealthData: true,
       medicalReport: true,
+      patientHealthData: true,
     },
   });
+
   return responseData;
 };
 
