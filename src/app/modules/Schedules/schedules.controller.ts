@@ -4,18 +4,17 @@ import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import { schedulesService } from "./schedules.service";
 
-const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await schedulesService.createSchedules;
+const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
+  const result = await schedulesService.insertIntoDB(req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Patient retrieval successfully",
+    message: "create schedules successfully",
     data: result,
   });
 });
 
 export const schedulesController = {
-  getByIdFromDB,
+  insertIntoDB,
 };

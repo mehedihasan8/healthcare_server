@@ -1,6 +1,6 @@
-const createSchedules = () => {
-  console.log("clidlsjfdl");
+const insertIntoDB = (payload: any) => {
+  console.log("clidlsjfdl", payload);
 };
 export const schedulesService = {
-  createSchedules,
+  insertIntoDB,
 };
