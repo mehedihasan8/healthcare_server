@@ -34,10 +34,21 @@ const insertIntoDB = async (payload: any) => {
         startDateTime: startDateTime,
         endDateTime: addMinutes(startDateTime, interverTime),
       };
-      const result = await prisma.schedule.create({
-        data: scheduleData,
+
+      const existingScheduls = await prisma.schedule.findFirst({
+        where: {
+          startDateTime: scheduleData.startDateTime,
+          endDateTime: scheduleData.endDateTime,
+        },
       });
-      schedules.push(result);
+
+      if (!existingScheduls) {
+        const result = await prisma.schedule.create({
+          data: scheduleData,
+        });
+        schedules.push(result);
+      }
+
       startDateTime.setMinutes(startDateTime.getMinutes() + interverTime);
     }
     currentDate.setDate(currentDate.getDate() + 1);
