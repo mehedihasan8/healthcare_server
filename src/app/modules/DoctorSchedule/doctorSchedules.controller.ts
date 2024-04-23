@@ -11,7 +11,7 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Doctor schedules create successfully!",
+    message: "Doctor schedule create successfully!",
     data: result,
   });
 });
