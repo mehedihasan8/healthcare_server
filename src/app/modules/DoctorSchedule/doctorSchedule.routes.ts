@@ -14,4 +14,10 @@ route.get(
 
 route.post("/", auth(UserRole.DOCTOR), doctorSchedulesController.insertIntoDB);
 
+route.delete(
+  "/:id",
+  auth(UserRole.DOCTOR),
+  doctorSchedulesController.deleteFromDB
+);
+
 export const doctorSchedulesRoutes = route;
