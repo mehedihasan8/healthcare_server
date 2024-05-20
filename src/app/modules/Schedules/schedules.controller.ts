@@ -3,6 +3,7 @@ import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import { schedulesService } from "./schedules.service";
+import pick from "../../../shared/pick";
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   const result = await schedulesService.insertIntoDB(req.body);
@@ -15,6 +16,22 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllFormDB = catchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, ["startDate", "endDate"]);
+
+  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+
+  const result = await schedulesService.getAllFormDB(filters, options);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Schedules fetched successfully!",
+    data: result,
+  });
+});
+
 export const schedulesController = {
   insertIntoDB,
+  getAllFormDB,
 };

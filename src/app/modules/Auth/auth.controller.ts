@@ -33,7 +33,7 @@ const refreshToken = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "refresh token genereated success!",
+    message: "refresh token generated success!",
     data: result,
   });
 });
