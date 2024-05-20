@@ -1,13 +1,13 @@
 import { addHours, addMinutes, format } from "date-fns";
 import { prisma } from "../../../shared/prisma";
 import { Prisma, Schedule } from "@prisma/client";
-import { ISchedule } from "./schedules.interface";
+import { IFilterRequest, ISchedule } from "./schedules.interface";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { IAuthUser } from "../../interfaces/common";
 
 const getAllFormDB = async (
-  filters: any,
+  filters: IFilterRequest,
   options: IPaginationOptions,
   user: IAuthUser
 ) => {
@@ -55,10 +55,17 @@ const getAllFormDB = async (
       },
     },
   });
-  console.log("doctor schedules", doctorSchedules);
+  const doctorSchedulesIdes = doctorSchedules.map(
+    (schedule) => schedule.scheduleId
+  );
+
+  console.log("doctor doctorSchedulesIdes", doctorSchedulesIdes);
 
   const result = await prisma.schedule.findMany({
-    where: whereConditions,
+    where: {
+      ...whereConditions,
+      id: { notIn: doctorSchedulesIdes },
+    },
     skip,
     take: limit,
     orderBy:
@@ -70,7 +77,10 @@ const getAllFormDB = async (
   });
 
   const total = await prisma.schedule.count({
-    where: whereConditions,
+    where: {
+      ...whereConditions,
+      id: { notIn: doctorSchedulesIdes },
+    },
   });
 
   return {
