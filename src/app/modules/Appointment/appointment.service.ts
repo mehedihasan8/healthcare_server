@@ -1,6 +1,6 @@
 import { prisma } from "../../../shared/prisma";
 import { IAuthUser } from "../../interfaces/common";
-
+import { v4 as uuid4 } from "uuid";
 const createAppointment = async (user: IAuthUser, payload: any) => {
   const patientData = await prisma.patient.findUniqueOrThrow({
     where: {
@@ -8,8 +8,37 @@ const createAppointment = async (user: IAuthUser, payload: any) => {
     },
   });
 
-  console.log("appointment create!", patientData);
-  console.log("payload !", payload);
+  const doctorData = await prisma.doctor.findUniqueOrThrow({
+    where: {
+      id: payload.doctorId,
+    },
+  });
+
+  const doctorScheduleData = await prisma.doctorSchedules.findFirstOrThrow({
+    where: {
+      doctorId: payload.doctorId,
+      scheduleId: payload.scheduleId,
+      isBooked: false,
+    },
+  });
+
+  const videoCallingId = uuid4();
+
+  const result = await prisma.appointment.create({
+    data: {
+      patientId: patientData.id,
+      doctorId: doctorData.id,
+      scheduleId: payload.scheduleId,
+      videoCallingId,
+    },
+    include: {
+      patient: true,
+      doctor: true,
+      schedule: true,
+    },
+  });
+
+  return result;
 };
 export const appointmentService = {
   createAppointment,
