@@ -4,8 +4,13 @@ import { Prisma, Schedule } from "@prisma/client";
 import { ISchedule } from "./schedules.interface";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import { paginationHelper } from "../../../helpers/paginationHelper";
+import { IAuthUser } from "../../interfaces/common";
 
-const getAllFormDB = async (filters: any, options: IPaginationOptions) => {
+const getAllFormDB = async (
+  filters: any,
+  options: IPaginationOptions,
+  user: IAuthUser
+) => {
   const { limit, page, skip } = paginationHelper.calculatePagination(options);
   const { startDate, endDate, ...filterData } = filters;
 
@@ -42,6 +47,15 @@ const getAllFormDB = async (filters: any, options: IPaginationOptions) => {
 
   const whereConditions: Prisma.ScheduleWhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {};
+
+  const doctorSchedules = await prisma.doctorSchedules.findMany({
+    where: {
+      doctor: {
+        email: user?.email,
+      },
+    },
+  });
+  console.log("doctor schedules", doctorSchedules);
 
   const result = await prisma.schedule.findMany({
     where: whereConditions,

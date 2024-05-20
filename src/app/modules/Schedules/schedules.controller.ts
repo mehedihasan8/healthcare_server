@@ -1,3 +1,4 @@
+import { IAuthUser } from "./../../interfaces/common";
 import { Request, Response } from "express";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
@@ -16,20 +17,28 @@ const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getAllFormDB = catchAsync(async (req: Request, res: Response) => {
-  const filters = pick(req.query, ["startDate", "endDate"]);
+const getAllFormDB = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const filters = pick(req.query, ["startDate", "endDate"]);
 
-  const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+    const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
 
-  const result = await schedulesService.getAllFormDB(filters, options);
+    const user = req.user;
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Schedules fetched successfully!",
-    data: result,
-  });
-});
+    const result = await schedulesService.getAllFormDB(
+      filters,
+      options,
+      user as IAuthUser
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Schedules fetched successfully!",
+      data: result,
+    });
+  }
+);
 
 export const schedulesController = {
   insertIntoDB,
